@@ -1,0 +1,31 @@
+html, body {
+  /* background-color: #000; */
+  margin: 0;
+  padding: 0;
+}
+
+.basePageContent {
+  display: block;
+  padding-top: 2rem;
+  margin-bottom: 4rem;
+}
+
+.tab-menu {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  background-color: red;
+}
+.tab-menu-item {
+  user-select: none;
+  appearance: none;
+  display: block;
+  padding: 0.5rem;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+}
+.tab-menu-item-selected {
+  background-color: #eee;
+}

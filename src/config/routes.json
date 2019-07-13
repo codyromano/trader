@@ -1,0 +1,30 @@
+{
+  "pages": {
+    "placeResource": {
+      "component": "PlaceTileResource",
+      "path": "/plant",
+      "exact": true
+    },
+    "weather": {
+      "component": "WeatherPage",
+      "path": "/weather",
+      "exact": true
+    },
+    "plant": {
+      "component": "ManageResourcePage",
+      "path": "/garden/:resourceId",
+      "exact": true
+    },
+    "treats": {
+      "component": "TreatsPage",
+      "path": "/treats",
+      "exact": true
+    },
+    "garden": {
+      "component": "GardenPage",
+      "path": "/",
+      "exact": true
+    }
+  },
+  "order": ["garden", "weather", "treats", "plant", "placeResource"]
+}
