@@ -68,18 +68,6 @@ export const purchasableItems = [
     title: 'Concert Tickets',
     imageSrc: 'https://d3vhc53cl8e8km.cloudfront.net/hello-staging/wp-content/uploads/2015/04/20235524/Ocghx21U8BBFNQJf1hCCoAM1COWogYiv0AFliocu-972x597.jpeg',
   },
-
-  {
-    visibleInitially: false,
-    id: 'grapefruitVodka',
-    quantity: 0,
-    value: 60,
-    min: 60,
-    max: 62,
-    title: 'Grapefruit Vodka',
-    imageSrc: 'https://cdn2.bigcommerce.com/server5500/tpbc2s65/products/350/images/10626/ABSOLUT_VODKA_750ML__16867.1553621218.1280.1280.jpg?c=2',
-  },
-
   {
     id: 'rover',
     quantity: 0,

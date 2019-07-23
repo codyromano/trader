@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from './Image';
-import { Row, Col } from './Grid';
+import { Row, Col, PageWidthContainer } from './Grid';
 
 export default class ChanceEncounter extends React.PureComponent {
   render() {
@@ -18,6 +18,7 @@ export default class ChanceEncounter extends React.PureComponent {
     } = this.props;
 
     return (
+      <PageWidthContainer>
       <Row>
         <Col width={12}>
         <Image src={imageSrc} width="100%" height="50vh" />
@@ -38,6 +39,7 @@ export default class ChanceEncounter extends React.PureComponent {
         <button onClick={onAccept} disabled={acceptDisabled}>{acceptText}</button>
         </Col>
       </Row>
+      </PageWidthContainer>
     )
   }
 }

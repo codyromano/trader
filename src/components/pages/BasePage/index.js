@@ -444,10 +444,12 @@ export default class BasePage extends React.Component {
         <PageWidthContainer>
           <Spacing bottom={1}>
             <Row>
-              <Col width={3}>
+              <Col width={4}>
+                <Spacing right={1}>
                 <NetWorth cash={cash} debt={debt} />
+                </Spacing>
               </Col>
-              <Col width={9}>
+              <Col width={8}>
                 <strong>Item pouch</strong>&nbsp;
                 <Currency n={this.getItemSpaceUsed()} hidePrefix /> / <Currency hidePrefix n={this.state.itemPouch} />
                 <Help>
