@@ -12,6 +12,7 @@ import NetWorth from './NetWorth';
 import Spacing from './Spacing';
 import ProfileBar from './ProfileBar';
 import ChanceEncounter from './ChanceEncounter';
+import FullPageMenu from './FullPageMenu';
 import chanceEncounters from './chanceEncounters.jsx';
 import Help from './Help';
 import './BasePage.css';
