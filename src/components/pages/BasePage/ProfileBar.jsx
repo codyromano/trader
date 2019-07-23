@@ -15,7 +15,7 @@ const Stat = ({ label, children, primary }) => (
   </React.Fragment>
 )
 
-const ProfileBar = ({ cash, debt, pouchSpaceUsed, pouchLimit }) => (
+const ProfileBar = ({ age, cash, debt, pouchSpaceUsed, pouchLimit }) => (
   <header style={{
     padding: '0',
     backgroundColor: 'rgba(72, 84, 96,1.0)',
@@ -46,8 +46,20 @@ const ProfileBar = ({ cash, debt, pouchSpaceUsed, pouchLimit }) => (
         </Stat>
         </Spacing>
 
+        <Spacing right={1}>
         <Stat label="Items">
           <Currency n={pouchSpaceUsed} hidePrefix /> / <Currency hidePrefix n={pouchLimit} />
+        </Stat>
+        </Spacing>
+        
+
+        <Stat label="Age">
+          {Math.floor(age)}
+          <Help>
+            <div style={{color: "#000"}}>
+            Try to become a billionaire before you pass away!
+            </div>
+          </Help>
         </Stat>
         </div>
     </PageWidthContainer>

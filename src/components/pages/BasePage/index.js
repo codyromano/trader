@@ -79,6 +79,7 @@ export default class BasePage extends React.Component {
     super(props);
     this.state = {
       day: 1,
+      age: 18,
       chanceEncounter: null,
       cash: STARTING_CASH,
       debt: STARTING_DEBT,
@@ -120,6 +121,7 @@ export default class BasePage extends React.Component {
         currentCityId: city.id,
         debt: 250,
         chanceEncounter,
+        age: state.age + 0.5
       }));
     }
   };
@@ -232,7 +234,8 @@ export default class BasePage extends React.Component {
         items,
         selectedTabId: 'spend',
         menuScreen: '',
-        chanceEncounter
+        chanceEncounter,
+        age: state.age + 0.25
       };
     });
   };
@@ -444,6 +447,7 @@ export default class BasePage extends React.Component {
         <Spacing bottom={1}>
           {/* TODO: Profile bar */ }
           <ProfileBar cash={cash} debt={debt}
+            age={this.state.age}
             pouchSpaceUsed={this.getItemSpaceUsed()}
             pouchLimit={this.state.itemPouch}
           />
