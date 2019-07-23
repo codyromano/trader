@@ -8,7 +8,6 @@ export default class PlainButton extends React.PureComponent {
   constructor(props) {
     super(props);
     this.style = {
-      ...props.style,
       appearance: 'none',
       margin: '0px',
       padding: '0px',
@@ -17,6 +16,7 @@ export default class PlainButton extends React.PureComponent {
       appearance: 'none',
       cursor: 'pointer',
       backgroundColor: 'transparent',
+      ...props.style,
     };
   }
 

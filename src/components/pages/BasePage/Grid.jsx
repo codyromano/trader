@@ -1,5 +1,7 @@
 import React from 'react';
 
+const MAX_PAGE_WIDTH = 40;
+
 export class Spacing extends React.PureComponent {
   unit = 1;
   defaultProps = {
@@ -27,6 +29,24 @@ export class Spacing extends React.PureComponent {
     )
   }
 }
+
+const pageWidthContainerStyle = {
+  maxWidth: `${MAX_PAGE_WIDTH}rem`,
+  marginLeft: 'auto',
+  marginRight: 'auto'
+};
+
+export const PageWidthContainer = ({ children, noPadding }) => {
+  
+  return (
+    <div style={pageWidthContainerStyle}>
+      {!noPadding && <Spacing left={1} right={1}>
+        {children}
+      </Spacing>}
+      {noPadding && children}
+    </div>
+  );
+};
 
 export class Row extends React.PureComponent {
   constructor(props) {

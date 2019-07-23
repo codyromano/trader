@@ -3,17 +3,19 @@ import PropTypes from 'prop-types';
 import TabMenu, { tabs } from './TabMenu';
 import Transact from './Transact';
 import Bank from './Bank';
-import { Row, Col } from './Grid';
+import { Row, Col, PageWidthContainer } from './Grid';
 import Currency from './Currency';
 import Notice from './Notice';
 import Travel from './Travel';
 import Image from './Image';
 import NetWorth from './NetWorth';
 import Spacing from './Spacing';
+import ProfileBar from './ProfileBar';
 import ChanceEncounter from './ChanceEncounter';
 import chanceEncounters from './chanceEncounters.jsx';
+import Help from './Help';
 import './BasePage.css';
-import { purchasableItems, MILLION, STARTING_CASH, STARTING_DEBT, TRAVEL_COST } from './constants';
+import { itemPouches, purchasableItems, MILLION, STARTING_CASH, STARTING_DEBT, TRAVEL_COST } from './constants';
 
 const CITIES = [
   {
@@ -79,6 +81,7 @@ export default class BasePage extends React.Component {
       cash: STARTING_CASH,
       debt: STARTING_DEBT,
       interestRate: 0.15,
+      itemPouch: 25,
       currentCityId: 'sea',
       selectedTabId: tabs[0].id,
       menuScreen: null,
@@ -86,8 +89,12 @@ export default class BasePage extends React.Component {
       items: purchasableItems.map(item => {
         item.value = item.min + Math.random() * (item.max - item.min);
         return item;
-      })
+      }),
     }
+  };
+
+  getItemSpaceUsed = () => {
+    return Object.values(this.state.itemsOwned).reduce((total, quantity) => total + quantity, 0);
   };
   
   onCityChange = (city) => {
@@ -199,6 +206,8 @@ export default class BasePage extends React.Component {
           priceSplitNews['title'] = `${item.title} skyrockets!`;
           item.value = item.max * (1 + priceSwing);
         }
+
+        priceSplitNews['imageSrc'] = item.imageSrc;
       }
 
       const shuffledEncounters = Object
@@ -239,11 +248,27 @@ export default class BasePage extends React.Component {
       selectedTabId: 'spend'
     }));
   }
+
+  onBorrow = (amount) => {
+    this.setState(state => ({
+      cash: state.cash + amount,
+      debt: state.debt + amount,
+      selectedTabId: 'spend',
+    }));
+  };
   
   onCancelPayoff = () => {
     this.setState({
       selectedTabId: 'spend'
     })
+  };
+
+  getNextPouchSpecs = () => {
+    const item = itemPouches.find(pouch => pouch.amount > this.state.itemPouch);
+    return {
+      nextPouchAmount: item.amount,
+      nextPouchCost: item.cost
+    }
   };
 
   onRejectChanceEncounter = () => {
@@ -252,6 +277,14 @@ export default class BasePage extends React.Component {
       ...newState,
       chanceEncounter: null
     });
+  };
+
+  upgradePouch = () => {
+    const item = itemPouches.find(pouch => pouch.amount > this.state.itemPouch);
+    this.setState(state => ({
+      cash: state.cash - item.cost,
+      itemPouch: item.amount,
+    }));
   };
 
   onAcceptChanceEncounter = () => {
@@ -297,24 +330,38 @@ export default class BasePage extends React.Component {
 
     if (selectedTabId === 'bank') {
       return (
-        <Bank
-          onSubmit={this.onPayoffDebt}
-          onCancel={this.onCancelPayoff}
-          debt={debt}
-          interestRate={interestRate}
-          cash={cash}
-        />
+        <React.Fragment>
+          <Row>
+            <TabMenu
+              onTabSelected={this.onTabSelected}
+              selectedTabId={selectedTabId}
+            />
+          </Row>
+          <Bank
+            borrowLimit={Math.max(10, cash * .10)}
+            onBorrow={this.onBorrow}
+            onSubmit={this.onPayoffDebt}
+            onCancel={this.onCancelPayoff}
+            debt={debt}
+            interestRate={interestRate}
+            cash={cash}
+          />
+        </React.Fragment>
       )
     }
 
     if (priceSplitNews) {
       return (
-        <div>
+        <Row>
+          <Col width={12}>
           <h1>Breaking news</h1>
           <h2>{priceSplitNews['title']}</h2>
 
+          <Image src={priceSplitNews['imageSrc']} width="100%" height="10rem" />
+
           <button onClick={this.onDismissNews}>Continue</button>
-        </div>
+          </Col>
+        </Row>
       )
     }
 
@@ -322,6 +369,8 @@ export default class BasePage extends React.Component {
       const transactionItem = items.find(item => item.id === transactionItemId);
       return (
         <Transact
+          pouchLimit={this.state.itemPouch}
+          pouchSpace={this.state.itemPouch - this.getItemSpaceUsed()}
           item={transactionItem}
           transactionType={transactionType}
           availableCash={this.state.cash}
@@ -381,25 +430,50 @@ export default class BasePage extends React.Component {
       </React.Fragment>
     );
 
+    const { nextPouchAmount, nextPouchCost } = this.getNextPouchSpecs();
+
     return (
       <main>
-        <Row>
+        <Spacing bottom={1}>
+          <ProfileBar />
+        </Spacing>
+
+        <PageWidthContainer>
+          <Spacing bottom={1}>
+            <Row>
+              <Col width={3}>
+                <NetWorth cash={cash} debt={debt} />
+              </Col>
+              <Col width={9}>
+                <strong>Item pouch</strong>&nbsp;
+                <Currency n={this.getItemSpaceUsed()} hidePrefix /> / <Currency hidePrefix n={this.state.itemPouch} />
+                <Help>
+                  You can purchase up to <Currency n={this.state.itemPouch} hidePrefix /> items in total right now.
+                  Upgrade your pouch to increase how many items you can buy.
+                </Help>
+                <br/>
+
+                <button onClick={this.upgradePouch} disabled={cash < nextPouchCost}>
+                  Upgrade pouch for <Currency n={nextPouchCost} />
+                </button>
+              </Col>
+            </Row>
+          </Spacing>
+
+        {selectedTabId === 'travel' && (
+          <Travel
+            onCitySelected={this.onCitySelected}
+            availableCash={this.state.cash}
+          />
+        )}
+        {selectedTabId === 'spend' && purchasableItems}
+       </PageWidthContainer>
+
+
           <TabMenu
             onTabSelected={this.onTabSelected}
             selectedTabId={selectedTabId}
           />
-        </Row>
-        <Spacing bottom={1}>
-          <NetWorth cash={cash} debt={debt} />
-        </Spacing>
-
-       {selectedTabId === 'travel' && (
-        <Travel
-          onCitySelected={this.onCitySelected}
-          availableCash={this.state.cash}
-        />
-       )}
-       {selectedTabId === 'spend' && purchasableItems}
       </main>
     );
   }

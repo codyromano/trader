@@ -34,9 +34,8 @@ export default class Image extends React.Component {
       display: 'inline-block',
       height,
       width,
-      marginRight: '0.5rem',
-      backgroundSize: 'cover',
-      backgroundImage: `url(${src})`,
+      background: `url(${src}) center no-repeat`,
+      backgroundSize: 'contain',
     };
     if (cached[src]) {
       return (

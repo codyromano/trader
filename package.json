@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "keywords": [],
-  "homepage": "https://codesandbox.io/s/new",
+  "homepage": "/",
   "main": "src/index.js",
   "dependencies": {
     "@smooth-ui/core-sc": "^10.1.0",

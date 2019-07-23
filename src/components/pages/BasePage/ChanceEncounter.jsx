@@ -20,7 +20,7 @@ export default class ChanceEncounter extends React.PureComponent {
     return (
       <Row>
         <Col width={12}>
-        <Image src={imageSrc} width="10rem" height="5rem" />
+        <Image src={imageSrc} width="100%" height="50vh" />
         <h1>{title}</h1>
         <p>{description}</p>
 
