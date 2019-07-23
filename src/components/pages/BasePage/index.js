@@ -54,7 +54,8 @@ class PurchasableItem extends React.PureComponent {
     return (
       <Row>
         <Col width="3">
-            <Image height="1rem" width="1rem" src={imageSrc} />
+          <Image height="1rem" width="1rem" src={imageSrc} />
+          &nbsp;
           {this.props.title}
         </Col>
         <Col width="3">
@@ -432,10 +433,12 @@ export default class BasePage extends React.Component {
 
     const { nextPouchAmount, nextPouchCost } = this.getNextPouchSpecs();
 
+
     return (
       <main>
         <Spacing bottom={1}>
-          <ProfileBar />
+          {/* TODO: Profile bar */ }
+          {false && <ProfileBar />}
         </Spacing>
 
         <PageWidthContainer>

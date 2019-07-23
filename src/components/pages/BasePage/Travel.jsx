@@ -1,5 +1,6 @@
 import React from 'react';
 import ImageButton from './ImageButton';
+import Help from './Help';
 import Currency from './Currency';
 import { Row, Col } from './Grid';
 import { STARTING_CASH, STARTING_DEBT, TRAVEL_COST } from './constants';
@@ -29,23 +30,37 @@ export default class Travel extends React.Component {
     
     if (availableCash >= TRAVEL_COST) {
       return (
-        <Row>
-          <ul style={this.listStyle}>
-            {this.cities.map(cityName => (
-              <li style={this.listItemStyle} key={cityName}>
-                <ImageButton
-                  imageSrc={this.images[cityName]}
-                  label={
-                    <React.Fragment>
-                      <strong>{cityName}</strong> - <Currency n={TRAVEL_COST}/>
-                    </React.Fragment>
-                  }
-                  onClick={() => this.props.onCitySelected(cityName)}
-                />
-              </li>
-            ))}
-          </ul>
-        </Row>
+        <React.Fragment>
+          <Row>
+            <Col width={12}>
+              Choose a destination
+              <Help>
+                <p>
+                  Each city has different item prices. The name of the game is to buy low and sell high.
+                </p>
+                <p>But there's a catch...Travel costs <Currency n={TRAVEL_COST} />. Also, time passes when you travel, and you
+                must pay interest on any debt.</p>
+              </Help>
+            </Col>
+          </Row>
+          <Row>
+            <ul style={this.listStyle}>
+              {this.cities.map(cityName => (
+                <li style={this.listItemStyle} key={cityName}>
+                  <ImageButton
+                    imageSrc={this.images[cityName]}
+                    label={
+                      <React.Fragment>
+                        <strong>{cityName}</strong> - <Currency n={TRAVEL_COST}/>
+                      </React.Fragment>
+                    }
+                    onClick={() => this.props.onCitySelected(cityName)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </Row>
+        </React.Fragment>
       );
     }
     return (

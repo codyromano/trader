@@ -35,7 +35,7 @@ export default class Image extends React.Component {
       height,
       width,
       background: `url(${src}) center no-repeat`,
-      backgroundSize: 'contain',
+      backgroundSize: 'cover',
     };
     if (cached[src]) {
       return (

@@ -1,19 +1,53 @@
 import React from 'react';
 import PlainButton from './PlainButton';
+import Notice from './Notice';
+import { PageWidthContainer, Row, Col } from './Grid';
 import Image from './Image';
 import { relative } from 'path';
+
+const verticalAlignStyle = {
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyItems: 'center',
+};
+
+const VerticalAlign = ({ children }) => (
+  <div style={verticalAlignStyle}>{children}</div>
+);
+
+const modalStyle = {
+  position: 'relative',
+};
+
+const Modal = ({ children }) => (
+  <PageWidthContainer>
+    <div style={modalStyle}>
+        {children}
+    </div>
+  </PageWidthContainer>
+);
 
 const help = {
   display: 'inline-block',
 };
 const helpText = {
   position: 'fixed',
+  zIndex: 1,
   top: '0px',
   left: '0px',
-  backgroundColor: '#fef',
-  padding: '10px',
-  maxWidth: '20rem',
-  border: 'solid #000',
+  height: '100%',
+  width: '100%',
+};
+
+const blackOverlay = {
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  width: '100%',
+  height: '100%',
 };
 
 const close = {
@@ -57,13 +91,22 @@ export default class Help extends React.Component {
 
         {this.state.helpTextVisible && (
           <div style={helpText}>
-            <div style={close}>
-              <PlainButton style={{
-                fontWeight: 'bold',
-                fontSize: '1.05rem'
-              }} onClick={this.onClose}>X</PlainButton>
-            </div>
-            <p>{this.props.children}</p>
+            <div style={blackOverlay} onClick={this.onClose} />
+            <VerticalAlign>
+              <Modal>
+                <Notice>
+                  <div style={{padding: '1rem' }}>
+                    <div style={close}>
+                      <PlainButton style={{
+                        fontWeight: 'bold',
+                        fontSize: '1.05rem'
+                      }} onClick={this.onClose}>X</PlainButton>
+                    </div>
+                    {this.props.children}
+                  </div>
+                </Notice>
+              </Modal>
+            </VerticalAlign>
           </div>
         )}
       </div>

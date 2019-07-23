@@ -3,8 +3,9 @@ import { Row, Col } from './Grid';
 
 export default class Notice extends React.PureComponent {
   style = {
-    backgroundColor: '#efe',
-    padding: '0.5rem'
+    backgroundColor: 'rgba(210, 218, 226,1.0)',
+    borderRadius: '0.25rem',
+    padding: '0.75rem'
   };
 
   render() {
