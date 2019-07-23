@@ -83,7 +83,7 @@ export default class Help extends React.Component {
         }} onClick={this.onClick}>
 
           <Image
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQazyjba4ETGVfL9JP1P1RYYDYTbLr6XG8_6Dk6CO3euy8apL4v"
+            src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Information_icon.svg/1024px-Information_icon.svg.png"
             height="1rem"
             width="1rem"
           />

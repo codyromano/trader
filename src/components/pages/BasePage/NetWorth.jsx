@@ -4,7 +4,8 @@ import Currency from './Currency';
 
 export default class NetWorth extends React.PureComponent {
   style = {
-    backgroundColor: '#fff',
+    lineHeight: '200%',
+    color: '#000'
   };
 
   render() {

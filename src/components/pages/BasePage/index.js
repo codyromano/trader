@@ -433,34 +433,33 @@ export default class BasePage extends React.Component {
 
     const { nextPouchAmount, nextPouchCost } = this.getNextPouchSpecs();
 
+    /*
+                    <strong>Item pouch</strong>&nbsp;
+                <Currency n={this.getItemSpaceUsed()} hidePrefix /> / <Currency hidePrefix n={this.state.itemPouch} />
+                */
 
     return (
       <main>
         <Spacing bottom={1}>
           {/* TODO: Profile bar */ }
-          {false && <ProfileBar />}
+          <ProfileBar cash={cash} debt={debt}
+            pouchSpaceUsed={this.getItemSpaceUsed()}
+            pouchLimit={this.state.itemPouch}
+          />
         </Spacing>
 
         <PageWidthContainer>
           <Spacing bottom={1}>
             <Row>
-              <Col width={4}>
-                <Spacing right={1}>
-                <NetWorth cash={cash} debt={debt} />
-                </Spacing>
-              </Col>
-              <Col width={8}>
-                <strong>Item pouch</strong>&nbsp;
-                <Currency n={this.getItemSpaceUsed()} hidePrefix /> / <Currency hidePrefix n={this.state.itemPouch} />
+              <Col width={12}>
+                <button onClick={this.upgradePouch} disabled={cash < nextPouchCost}>
+                  Increase item limit for <Currency n={nextPouchCost} />
+                </button>
+
                 <Help>
                   You can purchase up to <Currency n={this.state.itemPouch} hidePrefix /> items in total right now.
-                  Upgrade your pouch to increase how many items you can buy.
+                  Upgrade your pouch to increase how many items you can carry.
                 </Help>
-                <br/>
-
-                <button onClick={this.upgradePouch} disabled={cash < nextPouchCost}>
-                  Upgrade pouch for <Currency n={nextPouchCost} />
-                </button>
               </Col>
             </Row>
           </Spacing>
