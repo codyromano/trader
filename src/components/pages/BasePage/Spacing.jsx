@@ -17,7 +17,8 @@ export default class Spacing extends React.PureComponent {
       marginTop: `${top * unit}rem`,
       marginBottom: `${bottom * unit}rem`,
       marginLeft: `${left * unit}rem`,
-      marginRight: `${right * unit}rem`
+      marginRight: `${right * unit}rem`,
+      ...this.props.style
     };
 
     return (

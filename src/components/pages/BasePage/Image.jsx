@@ -6,40 +6,51 @@ const preloadImage = async (imageSrc) => new Promise((resolve) => {
   img.src = imageSrc;
 });
 
-const cached = {};
-
 export default class Image extends React.Component {
   state = {
     loaded: false,
   };
 
-  async componentDidMount() {
-    if (cached[src]) {
-      return;
-    }
-    const { src, height, width } = this.props;
+  loadImage = async (props) => {
+    const { src, height, width } = props;
     await preloadImage(src);
-    cached[src] = true;
 
     requestIdleCallback(() => {
       this.setState({
         loaded: true,
       })
     });
+  };
+
+  async componentDidMount() {
+    this.loadImage(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.loadImage(nextProps);
   }
 
   render() {
-    const { height, width, src } = this.props;
-    this.style = this.style || {
-      display: 'inline-block',
-      height,
-      width,
-      background: `url(${src}) center no-repeat`,
-      backgroundSize: 'contain',
-    };
-    if (cached[src]) {
+    const { height, width, src, cover } = this.props;
+    const backgroundSize = cover ? 'cover' : 'contain';
+
+    let style;
+    if (this.style && this.style.background.includes(src)) {
+      // Use cached style object
+      style = this.style;
+    } else {
+      style = {
+        display: 'inline-block',
+        height,
+        width,
+        background: `url(${src}) center no-repeat`,
+        backgroundSize,
+      };
+    }
+
+    if (this.state.loaded) {
       return (
-        <div style={this.style} />
+        <div style={style} />
       );
     }
     const placeholderStyle = {
