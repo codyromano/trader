@@ -6,25 +6,22 @@ export default class Spacing extends React.PureComponent {
     top: 0,
     bottom: 0,
     right: 0,
-    left: 0
+    left: 0,
   };
 
   render() {
-    const { top, bottom, left, right } = this.props;
+    const { top, bottom, left, right, inline } = this.props;
     const { unit } = this;
 
     const style = {
+      display: inline ? 'inline-block' : 'block',
       marginTop: `${top * unit}rem`,
       marginBottom: `${bottom * unit}rem`,
       marginLeft: `${left * unit}rem`,
       marginRight: `${right * unit}rem`,
-      ...this.props.style
+      ...this.props.style,
     };
 
-    return (
-      <div style={style}>
-        {this.props.children}
-      </div>
-    )
+    return <div style={style}>{this.props.children}</div>;
   }
 }

@@ -4,6 +4,7 @@ import TabMenu, { tabs } from './TabMenu';
 import Transact from './Transact';
 import Bank from './Bank';
 import { Row, Col, PageWidthContainer } from './Grid';
+import { Header, Text } from './Typography';
 import Currency from './Currency';
 import Notice from './Notice';
 import Travel from './Travel';
@@ -16,7 +17,14 @@ import FullPageMenu from './FullPageMenu';
 import chanceEncounters from './chanceEncounters.jsx';
 import Help from './Help';
 import './BasePage.css';
-import { itemPouches, purchasableItems, MILLION, STARTING_CASH, STARTING_DEBT, TRAVEL_COST } from './constants';
+import {
+  itemPouches,
+  purchasableItems,
+  MILLION,
+  STARTING_CASH,
+  STARTING_DEBT,
+  TRAVEL_COST,
+} from './constants';
 
 const CITIES = [
   {
@@ -29,18 +37,24 @@ const CITIES = [
   },
   {
     id: 'mia',
-    name: 'Miami'
-  }
+    name: 'Miami',
+  },
 ];
 
 class CityMenu extends React.PureComponent {
   render() {
     const { currentCityId, cities, onChange } = this.props;
-      return <ul>
-        {cities.map(city => (
-          <li><button onClick={() => onChange(city)} disabled={city.id === currentCityId}>{city.name}</button></li>
+    return (
+      <ul>
+        {cities.map((city) => (
+          <li>
+            <button onClick={() => onChange(city)} disabled={city.id === currentCityId}>
+              {city.name}
+            </button>
+          </li>
         ))}
-      </ul>;
+      </ul>
+    );
   }
 }
 
@@ -51,23 +65,39 @@ const random = (array) => {
 
 class PurchasableItem extends React.PureComponent {
   render() {
-    const { imageSrc, value, buyDisabled, sellDisabled, quantity, onBuyPressed, onSellPressed } = this.props;
+    const {
+      imageSrc,
+      value,
+      buyDisabled,
+      sellDisabled,
+      quantity,
+      onBuyPressed,
+      onSellPressed,
+    } = this.props;
     return (
       <Row>
-        <Col width="3">
+        <Col width="5">
           <Image height="1rem" width="1rem" src={imageSrc} />
           &nbsp;
-          {this.props.title}
+          <Text size="small">
+            {this.props.title}
+            {quantity > 0 && <React.Fragment>&nbsp;({quantity})</React.Fragment>}
+          </Text>
         </Col>
+
         <Col width="3">
-          <Currency n={value} />
+          <Text size="small">
+            <Currency n={value} />
+          </Text>
         </Col>
-        <Col width="3">
-          {quantity}
-        </Col>
-        <Col width="3">
-          <button onClick={() => onBuyPressed(this.props)} disabled={buyDisabled}>Buy</button>
-          {!sellDisabled && <button onClick={() => onSellPressed(this.props)}>Sell</button> }
+        {/*
+        <Col width="3">{quantity}</Col>
+        */}
+        <Col width="4">
+          <button onClick={() => onBuyPressed(this.props)} disabled={buyDisabled}>
+            Buy
+          </button>
+          {!sellDisabled && <button onClick={() => onSellPressed(this.props)}>Sell</button>}
         </Col>
       </Row>
     );
@@ -89,24 +119,23 @@ export default class BasePage extends React.Component {
       selectedTabId: tabs[0].id,
       menuScreen: null,
       itemsOwned: {},
-      items: purchasableItems.map(item => {
+      items: purchasableItems.map((item) => {
         item.value = item.min + Math.random() * (item.max - item.min);
         return item;
       }),
-    }
-  };
+    };
+  }
 
   getItemSpaceUsed = () => {
     return Object.values(this.state.itemsOwned).reduce((total, quantity) => total + quantity, 0);
   };
-  
+
   onCityChange = (city) => {
     if (this.state.cash >= TRAVEL_COST) {
+      const shuffledEncounters = Object.keys(chanceEncounters).sort((a, b) =>
+        Math.random() > 0.5 ? -1 : 1,
+      );
 
-      const shuffledEncounters = Object
-        .keys(chanceEncounters)
-        .sort((a, b) => Math.random() > 0.5 ? -1 : 1);
-      
       let chanceEncounter = null;
       for (const encounterId of shuffledEncounters) {
         if (shuffledEncounters[encounterId].shouldOccur(this.state)) {
@@ -121,7 +150,7 @@ export default class BasePage extends React.Component {
         currentCityId: city.id,
         debt: 250,
         chanceEncounter,
-        age: state.age + 0.5
+        age: state.age + 0.5,
       }));
     }
   };
@@ -129,7 +158,7 @@ export default class BasePage extends React.Component {
   onTabSelected = (tab) => {
     this.setState({
       selectedTabId: tab.id,
-    })
+    });
   };
 
   onBuyItem = (item) => {
@@ -153,7 +182,7 @@ export default class BasePage extends React.Component {
       menuScreen: '',
       transactionType: null,
       transactionItemId: null,
-    })
+    });
   };
 
   onTransact = (type, item, quantity) => {
@@ -182,24 +211,22 @@ export default class BasePage extends React.Component {
     });
   };
 
-  onCitySelected = () => {    
+  onCitySelected = () => {
     this.setState((state) => {
-      const priceSwing = 0.50;
-      const chanceOfPriceSwing = Math.random() <= .33;
-      const evenSplitChance = Math.random() <= .50;
+      const priceSwing = 0.5;
+      const chanceOfPriceSwing = Math.random() <= 0.33;
+      const evenSplitChance = Math.random() <= 0.5;
 
       let priceSplitNews = null;
 
-      const items = state.items.map(item => {
-        item.value = Math.round(
-          item.min + ((item.max - item.min) * Math.random())
-        );
+      const items = state.items.map((item) => {
+        item.value = Math.round(item.min + (item.max - item.min) * Math.random());
         return item;
       });
 
       if (chanceOfPriceSwing) {
         const item = random(items);
-        const multiplier = evenSplitChance ? 0.50 : 1.75;
+        const multiplier = evenSplitChance ? 0.5 : 1.75;
 
         priceSplitNews = {};
 
@@ -214,10 +241,10 @@ export default class BasePage extends React.Component {
         priceSplitNews['imageSrc'] = item.imageSrc;
       }
 
-      const shuffledEncounters = Object
-      .keys(chanceEncounters)
-      .sort((a, b) => Math.random() > 0.5 ? -1 : 1);
-      
+      const shuffledEncounters = Object.keys(chanceEncounters).sort((a, b) =>
+        Math.random() > 0.5 ? -1 : 1,
+      );
+
       let chanceEncounter = null;
       for (const encounterId of shuffledEncounters) {
         if (chanceEncounters[encounterId].shouldOccur(this.state)) {
@@ -235,7 +262,7 @@ export default class BasePage extends React.Component {
         selectedTabId: 'spend',
         menuScreen: '',
         chanceEncounter,
-        age: state.age + 0.25
+        age: state.age + 0.25,
       };
     });
   };
@@ -247,46 +274,49 @@ export default class BasePage extends React.Component {
   };
 
   onPayoffDebt = (amount) => {
-    this.setState(state => ({
+    this.setState((state) => ({
       debt: state.debt - amount,
       cash: state.cash - amount,
-      selectedTabId: 'spend'
+      selectedTabId: 'spend',
     }));
-  }
+  };
 
   onBorrow = (amount) => {
-    this.setState(state => ({
+    this.setState((state) => ({
       cash: state.cash + amount,
       debt: state.debt + amount,
       selectedTabId: 'spend',
     }));
   };
-  
+
   onCancelPayoff = () => {
     this.setState({
-      selectedTabId: 'spend'
-    })
+      selectedTabId: 'spend',
+    });
   };
 
   getNextPouchSpecs = () => {
-    const item = itemPouches.find(pouch => pouch.amount > this.state.itemPouch);
-    return {
-      nextPouchAmount: item.amount,
-      nextPouchCost: item.cost
+    const item = itemPouches.find((pouch) => pouch.amount > this.state.itemPouch);
+    if (item) {
+      return {
+        nextPouchAmount: item.amount,
+        nextPouchCost: item.cost,
+      };
     }
+    return null;
   };
 
   onRejectChanceEncounter = () => {
     const newState = chanceEncounters[this.state.chanceEncounter].onReject(this.state);
     this.setState({
       ...newState,
-      chanceEncounter: null
+      chanceEncounter: null,
     });
   };
 
   upgradePouch = () => {
-    const item = itemPouches.find(pouch => pouch.amount > this.state.itemPouch);
-    this.setState(state => ({
+    const item = itemPouches.find((pouch) => pouch.amount > this.state.itemPouch);
+    this.setState((state) => ({
       cash: state.cash - item.cost,
       itemPouch: item.amount,
     }));
@@ -296,7 +326,7 @@ export default class BasePage extends React.Component {
     const newState = chanceEncounters[this.state.chanceEncounter].onAccept(this.state);
     this.setState({
       ...newState,
-      chanceEncounter: null
+      chanceEncounter: null,
     });
   };
 
@@ -311,7 +341,7 @@ export default class BasePage extends React.Component {
       transactionType,
       interestRate,
       items,
-      transactionItemId
+      transactionItemId,
     } = this.state;
 
     if (chanceEncounter) {
@@ -337,13 +367,10 @@ export default class BasePage extends React.Component {
       return (
         <React.Fragment>
           <Row>
-            <TabMenu
-              onTabSelected={this.onTabSelected}
-              selectedTabId={selectedTabId}
-            />
+            <TabMenu onTabSelected={this.onTabSelected} selectedTabId={selectedTabId} />
           </Row>
           <Bank
-            borrowLimit={Math.max(10, cash * .10)}
+            borrowLimit={Math.max(10, cash * 0.1)}
             onBorrow={this.onBorrow}
             onSubmit={this.onPayoffDebt}
             onCancel={this.onCancelPayoff}
@@ -352,26 +379,26 @@ export default class BasePage extends React.Component {
             cash={cash}
           />
         </React.Fragment>
-      )
+      );
     }
 
     if (priceSplitNews) {
       return (
         <Row>
           <Col width={12}>
-          <h1>Breaking news</h1>
-          <h2>{priceSplitNews['title']}</h2>
+            <h1>Breaking news</h1>
+            <h2>{priceSplitNews['title']}</h2>
 
-          <Image src={priceSplitNews['imageSrc']} width="100%" height="10rem" />
+            <Image src={priceSplitNews['imageSrc']} width="100%" height="10rem" />
 
-          <button onClick={this.onDismissNews}>Continue</button>
+            <button onClick={this.onDismissNews}>Continue</button>
           </Col>
         </Row>
-      )
+      );
     }
 
     if (menuScreen === 'transaction') {
-      const transactionItem = items.find(item => item.id === transactionItemId);
+      const transactionItem = items.find((item) => item.id === transactionItemId);
       return (
         <Transact
           pouchLimit={this.state.itemPouch}
@@ -386,34 +413,29 @@ export default class BasePage extends React.Component {
       );
     }
 
-    const affordableItems = items
-      .filter((item) => {
-        return (
-          item.value <= cash ||
-          this.state.itemsOwned[item.id] ||
-          item.visibleInitially
-        );
-      });
+    const affordableItems = items.filter((item) => {
+      return item.value <= cash || this.state.itemsOwned[item.id] || item.visibleInitially;
+    });
     const unaffordableItems = items.length - affordableItems.length;
 
     const purchasableItems = (
       <React.Fragment>
         <Row>
-          <Col width="3">
+          <Col width="5">
             <strong>Item</strong>
           </Col>
           <Col width="3">
             <strong>Value</strong>
           </Col>
+          {/*
           <Col width="3">
             <strong>Shares</strong>
           </Col>
-          <Col width="3">
-            <strong>Actions</strong>
-          </Col>
+          */}
+          <Col width="4">&nbsp;</Col>
         </Row>
 
-        {affordableItems.map(item => (
+        {affordableItems.map((item) => (
           <PurchasableItem
             {...item}
             quantity={this.state.itemsOwned[item.id] || 0}
@@ -425,28 +447,25 @@ export default class BasePage extends React.Component {
           />
         ))}
 
-      {unaffordableItems > 0 && (
-        <Row>
-          <Notice warning>
-            Increase your net worth to unlock {unaffordableItems} other items
-          </Notice>
-        </Row>
-      )}
+        {unaffordableItems > 0 && (
+          <Row>
+            <Notice warning>
+              Increase your net worth to unlock {unaffordableItems} other items
+            </Notice>
+          </Row>
+        )}
       </React.Fragment>
     );
 
-    const { nextPouchAmount, nextPouchCost } = this.getNextPouchSpecs();
-
-    /*
-                    <strong>Item pouch</strong>&nbsp;
-                <Currency n={this.getItemSpaceUsed()} hidePrefix /> / <Currency hidePrefix n={this.state.itemPouch} />
-                */
+    const nextPouch = this.getNextPouchSpecs();
 
     return (
       <main>
         <Spacing bottom={1}>
-          {/* TODO: Profile bar */ }
-          <ProfileBar cash={cash} debt={debt}
+          {/* TODO: Profile bar */}
+          <ProfileBar
+            cash={cash}
+            debt={debt}
             age={this.state.age}
             pouchSpaceUsed={this.getItemSpaceUsed()}
             pouchLimit={this.state.itemPouch}
@@ -457,37 +476,37 @@ export default class BasePage extends React.Component {
           <Spacing bottom={1}>
             <Row>
               <Col width={12}>
-                <button onClick={this.upgradePouch} disabled={cash < nextPouchCost}>
-                  Increase item limit for <Currency n={nextPouchCost} />
-                </button>
+                {nextPouch && (
+                  <button onClick={this.upgradePouch} disabled={cash < nextPouch.nextPouchCost}>
+                    Upgrade item pouch for <Currency n={nextPouch.nextPouchCost} />
+                  </button>
+                )}
+                {!nextPouch && (
+                  <React.Fragment>
+                    <button disabled>Pouch fully upgraded</button>
+                  </React.Fragment>
+                )}
 
                 <Help>
-                  You can purchase up to <Currency n={this.state.itemPouch} hidePrefix /> items in total right now.
-                  Upgrade your pouch to increase how many items you can carry.
+                  You can purchase up to <Currency n={this.state.itemPouch} hidePrefix /> items in
+                  total right now. Upgrade your pouch to increase how many items you can carry.
                 </Help>
               </Col>
             </Row>
           </Spacing>
 
-        {selectedTabId === 'travel' && (
-          <Travel
-            onCitySelected={this.onCitySelected}
-            availableCash={this.state.cash}
-          />
-        )}
-        {selectedTabId === 'spend' && purchasableItems}
-       </PageWidthContainer>
+          {selectedTabId === 'travel' && (
+            <Travel onCitySelected={this.onCitySelected} availableCash={this.state.cash} />
+          )}
+          {selectedTabId === 'spend' && purchasableItems}
+        </PageWidthContainer>
 
-
-          <TabMenu
-            onTabSelected={this.onTabSelected}
-            selectedTabId={selectedTabId}
-          />
+        <TabMenu onTabSelected={this.onTabSelected} selectedTabId={selectedTabId} />
       </main>
     );
   }
 }
 
 BasePage.propTypes = {
-  routeId: PropTypes.string.isRequired
+  routeId: PropTypes.string.isRequired,
 };

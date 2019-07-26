@@ -1,8 +1,10 @@
 import React from 'react';
-import { Row, Col } from './Grid';
+import { Row, Col, PageWidthContainer } from './Grid';
 import Currency from './Currency';
 import RangeWithPreview from './RangeWithPreview';
 import Spacing from './Spacing';
+import Notice from './Notice';
+import { Text, Header } from './Typography';
 
 export default class Transact extends React.Component {
   constructor(props) {
@@ -15,13 +17,59 @@ export default class Transact extends React.Component {
   onChangeQuantity = (event) => {
     this.setState({
       currentValue: parseInt(event.target.value, 10),
-    })
+    });
   };
 
   transactSingleShare = () => {
     const { item, transactionType } = this.props;
-    this.props.onTransact(transactionType, item, 1)
-  }
+    this.props.onTransact(transactionType, item, 1);
+  };
+
+  renderCannotProcessTransactionMessage = () => {
+    const { pouchSpace, limit, transactionType } = this.props;
+
+    if (transactionType === 'buy' && !pouchSpace) {
+      return (
+        <Notice>
+          You can't buy anything because your item pouch is full. Sell something or buy a bigger
+          pouch.
+        </Notice>
+      );
+    }
+    return null;
+  };
+
+  renderStatsBar = () => {
+    const { availableCash, pouchSpace } = this.props;
+
+    return (
+      <Row>
+        <Col width={12}>
+          <Spacing inline right={1}>
+            <strong>
+              <Text size="small">Cash</Text>
+            </strong>
+          </Spacing>
+
+          <Spacing inline right={2}>
+            <Text size="small">
+              <Currency n={availableCash} />
+            </Text>
+          </Spacing>
+
+          <Spacing inline right={1}>
+            <strong>
+              <Text size="small">Pouch space</Text>
+            </strong>
+          </Spacing>
+
+          <Text size="small">
+            <Currency hidePrefix n={pouchSpace} />
+          </Text>
+        </Col>
+      </Row>
+    );
+  };
 
   render() {
     const { currentValue } = this.state;
@@ -41,66 +89,84 @@ export default class Transact extends React.Component {
     const unitNounPlural = 'shares';
     const noun = this.state.currentValue > 1 ? unitNounPlural : unitNounSingular;
 
-    return (
-      <Spacing top={2}>
-      <Row>
-        <Col width={4}>
-          {limit > 1 && (
-            <React.Fragment>
-              <Row>
-                <Col width={6}>
-                  <span>Available cash</span>
-                </Col>
-                <Col width={6}>
-                  <Currency n={availableCash} />
-                </Col>
-              </Row>
-              <Row>
-                <Col width={6}>
-                  <span>Pouch space</span>
-                </Col>
-                <Col width={6}>
-                  <Currency hidePrefix n={pouchSpace} />
-                </Col>
-              </Row>
-            </React.Fragment>
-          )}
-        </Col>
+    const cannotProcessTransaction = this.renderCannotProcessTransactionMessage();
 
-        <Col width={8}>
-          {currentValue > 0 && (
-            <Row>
-                <strong>{verb} <Currency hidePrefix n={this.state.currentValue} />&nbsp;
-                  {noun} of {item.title} for <Currency n={this.state.currentValue * item.value} /></strong>
-            </Row>
-          )}
-          {!currentValue && (
-            <Row>
-              <strong>{verb} {item.title}</strong>
-            </Row>
-          )}
-          {limit > 1 && (<Row>
-            <RangeWithPreview textInputWidth={limit.toString().length + 1} value={this.state.currentValue} onChange={this.onChangeQuantity} min={0} max={limit} />
-          </Row>)}
-
+    if (cannotProcessTransaction) {
+      return (
+        <PageWidthContainer>
           <Row>
             <Col width={12}>
-            <button onClick={this.props.onCancel}>Cancel</button>
-          {limit > 1 && this.state.currentValue > 0 && (
-            <button
-              disabled={this.props.transactDisabled}
-              onClick={() => this.props.onTransact(transactionType, item, this.state.currentValue)}>{verb}</button>
-          )}
-
-          {limit === 1 && (
-            <button
-              onClick={this.transactSingleShare}>{verb} 1 {noun}</button>
-          )}
+              <Spacing top={1} bottom={1}>
+                {cannotProcessTransaction}
+              </Spacing>
+              <button onClick={this.props.onCancel}>Back to trading screen</button>
             </Col>
           </Row>
-        </Col>
-      </Row>
-      </Spacing>
-    )
+        </PageWidthContainer>
+      );
+    }
+
+    return (
+      <PageWidthContainer>
+        <Spacing top={2}>
+          <Row>
+            <Col width={12}>{this.renderStatsBar()}</Col>
+          </Row>
+          <Row>
+            <Col width={12}>
+              {currentValue > 0 && (
+                <Row>
+                  <strong>
+                    {verb} <Currency hidePrefix n={this.state.currentValue} />
+                    &nbsp;
+                    {noun} of {item.title} for <Currency n={this.state.currentValue * item.value} />
+                  </strong>
+                </Row>
+              )}
+              {!currentValue && (
+                <Row>
+                  <strong>
+                    {verb} {item.title}
+                  </strong>
+                </Row>
+              )}
+              {limit > 1 && (
+                <Row>
+                  <RangeWithPreview
+                    textInputWidth={limit.toString().length + 1}
+                    value={this.state.currentValue}
+                    onChange={this.onChangeQuantity}
+                    min={0}
+                    max={limit}
+                  />
+                </Row>
+              )}
+
+              <Row>
+                <Col width={12}>
+                  <button onClick={this.props.onCancel}>Cancel</button>
+                  {limit > 1 && this.state.currentValue > 0 && (
+                    <button
+                      disabled={this.props.transactDisabled}
+                      onClick={() =>
+                        this.props.onTransact(transactionType, item, this.state.currentValue)
+                      }
+                    >
+                      {verb}
+                    </button>
+                  )}
+
+                  {limit === 1 && (
+                    <button onClick={this.transactSingleShare}>
+                      {verb} 1 {noun}
+                    </button>
+                  )}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Spacing>
+      </PageWidthContainer>
+    );
   }
-};
+}

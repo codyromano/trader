@@ -1,11 +1,12 @@
 import React from 'react';
 import { Row, Col } from './Grid';
 import Currency from './Currency';
+import Spacing from './Spacing';
 
 export default class NetWorth extends React.PureComponent {
   style = {
     lineHeight: '200%',
-    color: '#000'
+    color: '#000',
   };
 
   render() {
@@ -23,15 +24,23 @@ export default class NetWorth extends React.PureComponent {
             -<Currency n={debt} /> &nbsp; Debt
           </Row>
           <Row collapsed>
-            <div style={{borderTop: 'solid #555 1px', width: '100px'}}>
-                &nbsp;<Currency n={cash - debt} />
+            <div style={{ borderTop: 'solid #555 1px', width: '100px' }}>
+              &nbsp;
+              <Currency n={cash - debt} />
             </div>
           </Row>
         </div>
       );
     }
-    return (<Row collapsed>
-    <strong>Your net worth: <Currency n={cash} /></strong>
-    </Row>);
+    return (
+      <Row collapsed>
+        <strong style={{ color: '#000' }}>
+          <Spacing bottom={1}>
+            Your net worth is <Currency n={cash} />
+          </Spacing>
+          Congratulations...you have no debt. 🙂
+        </strong>
+      </Row>
+    );
   }
 }
