@@ -9,17 +9,23 @@ const preloadImage = async (imageSrc) => new Promise((resolve) => {
 export default class Image extends React.Component {
   state = {
     loaded: false,
+    error: false,
   };
 
   loadImage = async (props) => {
     const { src, height, width } = props;
-    await preloadImage(src);
 
-    requestIdleCallback(() => {
-      this.setState({
-        loaded: true,
-      })
-    });
+    try {
+      await preloadImage(src);
+
+      setTimeout(() => {
+        this.setState({
+          loaded: true,
+        })
+      }, 0);
+    } catch (error) {
+      console.error('Error loading image: ' + JSON.stringify(error));
+    }
   };
 
   async componentDidMount() {
