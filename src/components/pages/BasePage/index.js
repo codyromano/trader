@@ -9,8 +9,8 @@ import Currency from './Currency';
 import Notice from './Notice';
 import Travel from './Travel';
 import Image from './Image';
-import NetWorth from './NetWorth';
 import Spacing from './Spacing';
+import Button from './Button';
 import ProfileBar from './ProfileBar';
 import ChanceEncounter from './ChanceEncounter';
 import FullPageMenu from './FullPageMenu';
@@ -66,10 +66,10 @@ class PurchasableItem extends React.PureComponent {
         <Col width="3">{quantity}</Col>
         */}
         <Col width="4">
-          <button onClick={() => onBuyPressed(this.props)} disabled={buyDisabled}>
+          <Button small muted onClick={() => onBuyPressed(this.props)} disabled={buyDisabled}>
             Buy
-          </button>
-          {!sellDisabled && <button onClick={() => onSellPressed(this.props)}>Sell</button>}
+          </Button>&nbsp;
+          {!sellDisabled && <Button small onClick={() => onSellPressed(this.props)}>Sell</Button>}
         </Col>
       </Row>
     );
@@ -403,7 +403,7 @@ class BasePage extends React.Component {
 
             <Image src={priceSplitNews['imageSrc']} width="100%" height="10rem" />
 
-            <button onClick={this.onDismissNews}>Continue</button>
+            <Button onClick={this.onDismissNews}>Continue</Button>
           </Col>
         </Row>
       );
@@ -491,13 +491,13 @@ class BasePage extends React.Component {
             <Row>
               <Col width={12}>
                 {nextPouch && (
-                  <button onClick={this.upgradePouch} disabled={cash < nextPouch.nextPouchCost}>
+                  <Button onClick={this.upgradePouch} disabled={cash < nextPouch.nextPouchCost}>
                     Upgrade item pouch for <Currency n={nextPouch.nextPouchCost} />
-                  </button>
+                  </Button>
                 )}
                 {!nextPouch && (
                   <React.Fragment>
-                    <button disabled>Pouch fully upgraded</button>
+                    <Button disabled>Pouch fully upgraded</Button>
                   </React.Fragment>
                 )}
 

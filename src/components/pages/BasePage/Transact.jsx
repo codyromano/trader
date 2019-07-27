@@ -5,6 +5,7 @@ import RangeWithPreview from './RangeWithPreview';
 import Spacing from './Spacing';
 import Notice from './Notice';
 import { Text, Header } from './Typography';
+import Button from './Button';
 
 export default class Transact extends React.Component {
   constructor(props) {
@@ -99,7 +100,7 @@ export default class Transact extends React.Component {
               <Spacing top={1} bottom={1}>
                 {cannotProcessTransaction}
               </Spacing>
-              <button onClick={this.props.onCancel}>Back to trading screen</button>
+              <Button onClick={this.props.onCancel}>Back to trading screen</Button>
             </Col>
           </Row>
         </PageWidthContainer>
@@ -130,7 +131,7 @@ export default class Transact extends React.Component {
                   </strong>
                 </Row>
               )}
-              {limit > 1 && (
+
                 <Row>
                   <RangeWithPreview
                     textInputWidth={limit.toString().length + 1}
@@ -140,27 +141,24 @@ export default class Transact extends React.Component {
                     max={limit}
                   />
                 </Row>
-              )}
 
               <Row>
                 <Col width={12}>
-                  <button onClick={this.props.onCancel}>Cancel</button>
-                  {limit > 1 && this.state.currentValue > 0 && (
-                    <button
+                  <Spacing right={1}>
+                    
+                  <Button muted onClick={this.props.onCancel}>Cancel</Button>
+
+                  {this.state.currentValue > 0 && (
+                    <Button
                       disabled={this.props.transactDisabled}
                       onClick={() =>
                         this.props.onTransact(transactionType, item, this.state.currentValue)
                       }
                     >
                       {verb}
-                    </button>
+                    </Button>
                   )}
-
-                  {limit === 1 && (
-                    <button onClick={this.transactSingleShare}>
-                      {verb} 1 {noun}
-                    </button>
-                  )}
+                  </Spacing>
                 </Col>
               </Row>
             </Col>
