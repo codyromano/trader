@@ -1,4 +1,5 @@
 import React from 'react';
+import createUniqueId from 'uuid/v1';
 import FullPageMenu from './FullPageMenu';
 import { Row, Col, PageWidthContainer } from './Grid';
 import Image from './Image';
@@ -7,54 +8,42 @@ import PlainButton from './PlainButton';
 import Button from './Button';
 import { Header, Text } from './Typography';
 import { withGameDatabase } from './withDatabase';
-
-const players = [
-  {
-    id: 'rene',
-    name: 'Rene',
-    occupation: 'Artist',
-    description: (
-      <React.Fragment>
-        Rene has exclusive access to <Text accent>fine art</Text>, a lucrative commodity for
-        trading, and his low-stress career affords a <Text accent>long life expectancy</Text>, but
-        he has <Text danger>bad financial luck</Text>.
-      </React.Fragment>
-    ),
-    image: './images/rene.jpg',
-  },
-  {
-    id: 'michelle',
-    name: 'Michelle',
-    occupation: 'Surgeon',
-    description: (
-      <React.Fragment>
-        Unlike other players, Michelle <Text accent>can't be injured</Text> during chance
-        encounters, and and she may invest in a valuable <Text accent>medical practice</Text>.
-        However, she starts the game <Text danger>at an older age</Text> and with{' '}
-        <Text danger>more debt</Text>.
-      </React.Fragment>
-    ),
-    image: './images/michelle.jpg',
-  },
-  {
-    id: 'player3',
-    name: 'Player 3: Coming soon',
-    occupation: '',
-    description: `Hang tight...I'm working to add more players with special abilities to the game. :)`,
-    image: './images/player.jpg',
-    placeholder: true,
-  },
-  {
-    id: 'player4',
-    name: 'Player 4: Coming soon',
-    occupation: '',
-    description: `Hang tight...I'm working to add more players with special abilities to the game. :)`,
-    image: './images/player.jpg',
-  },
-];
+import players from './players';
 
 const STEP_INTRO = 'intro';
 const STEP_SELECT = 'select';
+
+class SerializableGameObject {
+  attributes = {};
+
+  setAttribute(attributeName, value) {
+    this.attributes[attributeName] = value;
+  }
+  setAttributes(attributes) {
+    for (const [key, value] of Object.entries(attributes)) {
+      this.setAttribute(key, value);
+    }
+  }
+  getAttribute = (attributeName) => this.attributes[attributeName];
+  toString = () => JSON.stringify(this.attributes);
+}
+
+class Player extends SerializableGameObject {
+  constructor() {
+    super();
+    this.setAttributes({
+      age: 18,
+      netWorth: 50,
+    });
+  }
+}
+
+class Michelle extends Player {
+  constructor() {
+    super();
+    this.setAttribute();
+  }
+}
 
 class PlayerSelect extends React.Component {
   state = {
@@ -87,6 +76,27 @@ class PlayerSelect extends React.Component {
     );
   };
 
+  getCurrentPlayer = () => {
+    return (
+      players.find((player) => player.id === this.props.databaseValues['playerTypeId']) || null
+    );
+  };
+
+  confirmPlayerSelection = () => {
+    const currentPlayer = this.getCurrentPlayer();
+    const startingAges = {
+      rene: 16,
+      michelle: 30,
+    };
+
+    this.props.setItem('player', {
+      id: createUniqueId(),
+      typeId: currentPlayer.id,
+      startingAge: startingAges[currentPlayer.id],
+    });
+    this.props.history.push('/');
+  };
+
   renderSelect = () => {
     const savedPlayer = players.find(
       (player) => player.id === this.props.databaseValues['playerTypeId'],
@@ -105,22 +115,24 @@ class PlayerSelect extends React.Component {
     return (
       <React.Fragment>
         <Row>
-          <Col width={5}>
-            <Image src={currentPlayer.image} width="100%" height="15rem" {...extraProps} />
+          <Col width={4}>
+            <Image src={currentPlayer.image} width="100%" height="10rem" {...extraProps} />
           </Col>
-          <Col width={7}>
+          <Col width={8}>
             <Spacing left={1}>
               <Spacing>
                 <Header level={1}>{currentPlayer.name}</Header>
               </Spacing>
-              <Spacing bottom={2}>
+              <Spacing bottom={1}>
                 <Header level={3}>{currentPlayer.occupation}</Header>
               </Spacing>
-              <Text>{currentPlayer.description}</Text>
+              <Text size="small">{currentPlayer.description}</Text>
 
               {currentPlayer.occupation.length > 0 && (
                 <Spacing top={1}>
-                  <Button>Play as {currentPlayer.name}</Button>
+                  <Button onClick={this.confirmPlayerSelection}>
+                    Play as {currentPlayer.name}
+                  </Button>
                 </Spacing>
               )}
             </Spacing>

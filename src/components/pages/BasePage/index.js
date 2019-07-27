@@ -15,6 +15,7 @@ import ProfileBar from './ProfileBar';
 import ChanceEncounter from './ChanceEncounter';
 import FullPageMenu from './FullPageMenu';
 import chanceEncounters from './chanceEncounters.jsx';
+import { withGameDatabase } from './withDatabase';
 import Help from './Help';
 import './BasePage.css';
 import {
@@ -24,39 +25,10 @@ import {
   STARTING_CASH,
   STARTING_DEBT,
   TRAVEL_COST,
+  CITIES,
 } from './constants';
-
-const CITIES = [
-  {
-    id: 'sea',
-    name: 'Seattle',
-  },
-  {
-    id: 'nyc',
-    name: 'New York',
-  },
-  {
-    id: 'mia',
-    name: 'Miami',
-  },
-];
-
-class CityMenu extends React.PureComponent {
-  render() {
-    const { currentCityId, cities, onChange } = this.props;
-    return (
-      <ul>
-        {cities.map((city) => (
-          <li>
-            <button onClick={() => onChange(city)} disabled={city.id === currentCityId}>
-              {city.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    );
-  }
-}
+import CityMenu from './CityMenu';
+import players from './players';
 
 const random = (array) => {
   const index = Math.floor(Math.random() * array.length);
@@ -104,12 +76,16 @@ class PurchasableItem extends React.PureComponent {
   }
 }
 
-export default class BasePage extends React.Component {
+class BasePage extends React.Component {
   constructor(props) {
     super(props);
+
+    // TODO: Should not have to do defensive check here
+    const player = this.getCurrentPlayer(props) || {type: { id: 0}};
+
     this.state = {
       day: 1,
-      age: 18,
+      age: player.startingAge,
       chanceEncounter: null,
       cash: STARTING_CASH,
       debt: STARTING_DEBT,
@@ -119,11 +95,37 @@ export default class BasePage extends React.Component {
       selectedTabId: tabs[0].id,
       menuScreen: null,
       itemsOwned: {},
-      items: purchasableItems.map((item) => {
-        item.value = item.min + Math.random() * (item.max - item.min);
-        return item;
-      }),
+      items: purchasableItems
+        .map((item) => {
+          item.value = item.min + Math.random() * (item.max - item.min);
+          return item;
+        })
+        .filter(({ specificToPlayer }) => [undefined, player.type.id].includes(specificToPlayer)),
     };
+  }
+
+  getCurrentPlayer = (props = this.props) => {
+    const { player } = props.databaseValues;
+    if (player) {
+      const type = players.find((playerType) => playerType.id === player.typeId);
+      return {
+        ...player,
+        type,
+      };
+    }
+    return null;
+  };
+
+  playerIsSelected = () => {
+    return !!this.props.databaseValues.player;
+  };
+
+  // TODO: Explore using hooks
+  componentDidMount() {
+    // Force player detection
+    if (!this.playerIsSelected()) {
+      this.props.history.push('player');
+    }
   }
 
   getItemSpaceUsed = () => {
@@ -330,6 +332,12 @@ export default class BasePage extends React.Component {
     });
   };
 
+  onPressQuit = () => {
+    this.props.setItem('player', null);
+    this.props.setItem('playerTypeId', null);
+    this.props.history.push('player');
+  };
+
   render() {
     const {
       chanceEncounter,
@@ -343,6 +351,10 @@ export default class BasePage extends React.Component {
       items,
       transactionItemId,
     } = this.state;
+
+    if (!this.playerIsSelected()) {
+      return null;
+    }
 
     if (chanceEncounter) {
       const chanceEncounterDefinition = chanceEncounters[chanceEncounter];
@@ -464,6 +476,8 @@ export default class BasePage extends React.Component {
         <Spacing bottom={1}>
           {/* TODO: Profile bar */}
           <ProfileBar
+            onPressQuit={this.onPressQuit}
+            player={this.getCurrentPlayer()}
             cash={cash}
             debt={debt}
             age={this.state.age}
@@ -510,3 +524,5 @@ export default class BasePage extends React.Component {
 BasePage.propTypes = {
   routeId: PropTypes.string.isRequired,
 };
+
+export default withGameDatabase(BasePage, ['player']);

@@ -5,10 +5,16 @@ import Image from './Image';
 import Currency from './Currency';
 import Help from './Help';
 import NetWorth from './NetWorth';
+import Button from './Button';
+
+// TODO: styled component
+const statLabel = {
+  display: 'block',
+};
 
 const Stat = ({ label, children, primary }) => (
   <React.Fragment>
-    <span>{label}</span>&nbsp;
+    <div style={statLabel}>{label}</div>
     <strong
       style={{
         color: '#ffd32a',
@@ -19,7 +25,7 @@ const Stat = ({ label, children, primary }) => (
   </React.Fragment>
 );
 
-const ProfileBar = ({ age, cash, debt, pouchSpaceUsed, pouchLimit }) => (
+const ProfileBar = ({ onPressQuit, player, age, cash, debt, pouchSpaceUsed, pouchLimit }) => (
   <header
     style={{
       padding: '0',
@@ -34,16 +40,11 @@ const ProfileBar = ({ age, cash, debt, pouchSpaceUsed, pouchLimit }) => (
           color: '#d2dae2',
         }}
       >
-        {/*
         <Spacing right={1}>
-
-        <Image
-          src="https://www.searchpng.com/wp-content/uploads/2019/02/Deafult-Profile-Pitcher.png"
-          height="2rem"
-          width="2rem"
-        />
+          <div style={{ border: 'solid #fff 1px' }}>
+            <Image src={player.type.image} height="2rem" width="2rem" />
+          </div>
         </Spacing>
-                  */}
 
         <Spacing right={1}>
           <Stat label="Net worth">
@@ -60,12 +61,20 @@ const ProfileBar = ({ age, cash, debt, pouchSpaceUsed, pouchLimit }) => (
           </Stat>
         </Spacing>
 
-        <Stat label="Age">
-          {Math.floor(age)}
-          <Help>
-            <div style={{ color: '#000' }}>Try to become a billionaire before you pass away!</div>
-          </Help>
-        </Stat>
+        <Spacing right={1}>
+          <Stat label="Age">
+            {Math.floor(age)}
+            <Help>
+              <div style={{ color: '#000' }}>Try to become a billionaire before you pass away!</div>
+            </Help>
+          </Stat>
+        </Spacing>
+
+        <Spacing right={1}>
+          <Button muted onClick={onPressQuit}>
+            Quit
+          </Button>
+        </Spacing>
       </div>
     </PageWidthContainer>
   </header>

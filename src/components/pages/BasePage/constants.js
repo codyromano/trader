@@ -5,6 +5,21 @@ export const BILLION = MILLION * 1000;
 export const TRILLION = BILLION * 1000;
 export const STARTING_CASH = 10 + Math.random() * 50;
 
+const CITIES = [
+  {
+    id: 'sea',
+    name: 'Seattle',
+  },
+  {
+    id: 'nyc',
+    name: 'New York',
+  },
+  {
+    id: 'mia',
+    name: 'Miami',
+  },
+];
+
 export const itemPouches = [
   {
     amount: 50,
@@ -69,6 +84,17 @@ export const purchasableItems = [
     title: 'Concert Tickets',
     imageSrc:
       'https://d3vhc53cl8e8km.cloudfront.net/hello-staging/wp-content/uploads/2015/04/20235524/Ocghx21U8BBFNQJf1hCCoAM1COWogYiv0AFliocu-972x597.jpeg',
+  },
+  {
+    visibleInitially: true,
+    id: 'fineArt',
+    quantity: 0,
+    value: 10000,
+    min: 10000,
+    max: 10000 * 3,
+    title: 'Fine art',
+    imageSrc: 'placeholder.jpg',
+    specificToPlayer: 'rene',
   },
   {
     id: 'rover',

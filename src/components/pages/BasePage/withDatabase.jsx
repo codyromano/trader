@@ -40,6 +40,7 @@ class Database {
 // HOC to provide the wrapped component with methods for
 // updating and accessing values from the database
 class WithDatabase extends React.Component {
+  state = {};
   static emptyDatabaseValues = Object.freeze({});
 
   getItem = async (key) => this.props.database.get(key);
@@ -47,6 +48,7 @@ class WithDatabase extends React.Component {
     this.props.database.save(key, value);
   };
 
+  // TODO: Don't load values synchronously and individually
   async loadInitialValuesFromDatabase() {
     const values = {};
     const { database, subscribe } = this.props;
@@ -56,11 +58,14 @@ class WithDatabase extends React.Component {
       values[subscribeToDatabaseKey] = value;
     }
 
-    this.setState(values);
+    this.setState({
+      ...values,
+      initialValuesLoaded: true,
+    });
   }
 
-  async componentDidMount() {
-    await this.loadInitialValuesFromDatabase();
+  componentDidMount() {
+    this.loadInitialValuesFromDatabase();
 
     const { database, subscribe } = this.props;
     this.unsubscribeMethods = [];
@@ -85,7 +90,14 @@ class WithDatabase extends React.Component {
   };
 
   render() {
+    const { initialValuesLoaded } = this.state;
     const { component: Component, database, subscribe, ...restProps } = this.props;
+
+    if (!initialValuesLoaded) {
+      // TODO: Make better looking lol
+      return 'Loading';
+    }
+
     return (
       <Component
         databaseValues={this.state || WithDatabase.emptyDatabaseValues}
