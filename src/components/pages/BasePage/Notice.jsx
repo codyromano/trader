@@ -10,9 +10,18 @@ export default class Notice extends React.PureComponent {
   };
 
   render() {
+    const { danger } = this.props;
+    let style = this.style;
+
+    if (danger) {
+      style = {
+        ...this.style,
+        backgroundColor: '#ff5e57'
+      };
+    }
     return (
       <Row>
-        <div style={this.style}>
+        <div style={style}>
           <Text size="small">{this.props.children}</Text>
         </div>
       </Row>

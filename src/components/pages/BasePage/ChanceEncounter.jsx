@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from './Image';
+import { Header } from './Typography';
 import { Row, Col, PageWidthContainer } from './Grid';
 
 export default class ChanceEncounter extends React.PureComponent {
@@ -22,7 +23,7 @@ export default class ChanceEncounter extends React.PureComponent {
       <Row>
         <Col width={12}>
         <Image src={imageSrc} width="100%" height="50vh" />
-        <h1>{title}</h1>
+        <Header level={1}>{title}</Header>
         <p>{description}</p>
 
         {acceptDisabledText && (

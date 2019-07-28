@@ -3,7 +3,7 @@ export const TRAVEL_COST = 2.5;
 export const MILLION = 1000000;
 export const BILLION = MILLION * 1000;
 export const TRILLION = BILLION * 1000;
-export const STARTING_CASH = 10 + Math.random() * 50;
+export const STARTING_CASH = 30;
 
 const CITIES = [
   {

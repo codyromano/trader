@@ -425,10 +425,18 @@ class BasePage extends React.Component {
       );
     }
 
-    const affordableItems = items.filter((item) => {
-      return item.value <= cash || this.state.itemsOwned[item.id] || item.visibleInitially;
+    let totalPurchasableItems = 0;
+    let totalSharesOwned = 0;
+
+    const visibleItems = items.filter((item) => {
+      const isPurchasable = item.value <= cash;
+      const sharesOwned = this.state.itemsOwned[item.id];
+      totalPurchasableItems += isPurchasable ? 1 : 0;
+      totalSharesOwned += sharesOwned ? sharesOwned : 0;
+      return isPurchasable || sharesOwned || item.visibleInitially;
     });
-    const unaffordableItems = items.length - affordableItems.length;
+    
+    const hiddenItems = items.length - visibleItems.length;
 
     const purchasableItems = (
       <React.Fragment>
@@ -447,7 +455,7 @@ class BasePage extends React.Component {
           <Col width="4">&nbsp;</Col>
         </Row>
 
-        {affordableItems.map((item) => (
+        {visibleItems.map((item) => (
           <PurchasableItem
             {...item}
             quantity={this.state.itemsOwned[item.id] || 0}
@@ -459,10 +467,10 @@ class BasePage extends React.Component {
           />
         ))}
 
-        {unaffordableItems > 0 && (
+        {hiddenItems > 0 && (
           <Row>
             <Notice warning>
-              Increase your net worth to unlock {unaffordableItems} other items
+              Increase your net worth to unlock {hiddenItems} other items
             </Notice>
           </Row>
         )}
@@ -490,12 +498,35 @@ class BasePage extends React.Component {
           <Spacing bottom={1}>
             <Row>
               <Col width={12}>
-                {nextPouch && (
+                {totalPurchasableItems === 0 && (
+                  <Notice danger>
+                    You don't have enough cash to buy anything. 
+                    {totalSharesOwned > 0 && (
+                      <React.Fragment>
+                        &nbsp;Sell shares or <a href="#" style={{ color: '#eee'}} onClick={() => {
+                          this.setState({
+                            selectedTabId: 'bank'
+                          });
+                        }}>visit the bank</a> to borrow money.
+                      </React.Fragment>
+                    )}
+                    {totalSharesOwned === 0 && (
+                      <React.Fragment>
+                        &nbsp;<a href="#" style={{ color: '#eee'}} onClick={() => {
+                          this.setState({
+                            selectedTabId: 'bank'
+                          });
+                        }}>Visit the bank</a> to borrow money.
+                      </React.Fragment>
+                    )}
+                  </Notice>
+                )}
+                {totalPurchasableItems > 0 && nextPouch && (
                   <Button onClick={this.upgradePouch} disabled={cash < nextPouch.nextPouchCost}>
                     Upgrade item pouch for <Currency n={nextPouch.nextPouchCost} />
                   </Button>
                 )}
-                {!nextPouch && (
+                {totalPurchasableItems > 0 && !nextPouch && (
                   <React.Fragment>
                     <Button disabled>Pouch fully upgraded</Button>
                   </React.Fragment>

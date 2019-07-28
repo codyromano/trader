@@ -1,25 +1,49 @@
 import React from 'react';
 import Currency from './Currency';
 import { MILLION } from './constants';
+import Help from './Help';
 
 const chanceEncounters = {
   'unexpectedExpense': {
     title: () => 'Unexpected healthcare expense',
     imageSrc: () => 'https://cdn.aarp.net/content/dam/aarp/money/taxes/2018/01/1140-tax-law-medical-expense.imgcache.reva46d93de89047fbe30eabbf2dc48a06e.jpg',
-    shouldOccur: () => Math.random() <= .9,
+    shouldOccur: ({ cash }) => cash > 0 && Math.random() <= .10,
     description: ({ cash, interestRate }) => (
       <React.Fragment>
         <p>
-          An unexpected medical expense set you back <Currency n={Math.max(25, cash * .05)} />.
+          An unexpected medical expense cost you <Currency n={Math.max(50, cash * .05)} />.
         </p>
+        {cash < 50 && (
+          <p>
+            Because you only had <Currency n={cash} /> in cash, you had to borrow&nbsp; 
+            <Currency n={50 - cash} /> from the bank.
+
+            <Help>
+              The bank's current interest rate is {interestRate}, and they'll charge you interest
+              every time you travel. Don't forget to visit the "Bank" tab and pay down your loan!
+            </Help>
+          </p>
+        )}
       </React.Fragment>
     ),
     acceptDisabled: () => false,
     acceptText: () => 'Bummer...',
     rejectText: () => ``,
-    onAccept({ cash }) {
+    onAccept({ cash, debt }) {
+      let newCash = cash;
+      let newDebt = debt;
+
+      if (cash >= 50) {
+        newCash -= 50;
+      } else {
+        newCash = 0;
+        newDebt += 50 - cash;
+      }
+
+
       return {
-        cash: cash - Math.max(25, cash * .05)
+        cash: newCash,
+        debt: newDebt
       };
     },
     onReject: () => {},

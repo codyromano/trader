@@ -26,6 +26,15 @@ class SerializableGameObject {
   }
   getAttribute = (attributeName) => this.attributes[attributeName];
   toString = () => JSON.stringify(this.attributes);
+
+  deserialize = (serialized) => {
+    try {
+      const parsed = JSON.parse(serialized);
+      Object.assign(this.attributes, parsed);
+    } catch (error) {
+      throw new Error('SerializableGameObject - cannot deserialize: ' + serialized);
+    }
+  };
 }
 
 class Player extends SerializableGameObject {
