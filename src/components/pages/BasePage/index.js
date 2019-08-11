@@ -4,7 +4,7 @@ import TabMenu, { tabs } from './TabMenu';
 import Transact from './Transact';
 import Bank from './Bank';
 import { Row, Col, PageWidthContainer } from './Grid';
-import { Header, Text } from './Typography';
+import { Text } from './Typography';
 import Currency from './Currency';
 import Notice from './Notice';
 import Travel from './Travel';
@@ -13,7 +13,6 @@ import Spacing from './Spacing';
 import Button from './Button';
 import ProfileBar from './ProfileBar';
 import ChanceEncounter from './ChanceEncounter';
-import FullPageMenu from './FullPageMenu';
 import chanceEncounters from './chanceEncounters.jsx';
 import { withGameDatabase } from './withDatabase';
 import Help from './Help';
@@ -68,8 +67,13 @@ class PurchasableItem extends React.PureComponent {
         <Col width="4">
           <Button small muted onClick={() => onBuyPressed(this.props)} disabled={buyDisabled}>
             Buy
-          </Button>&nbsp;
-          {!sellDisabled && <Button small onClick={() => onSellPressed(this.props)}>Sell</Button>}
+          </Button>
+          &nbsp;
+          {!sellDisabled && (
+            <Button small onClick={() => onSellPressed(this.props)}>
+              Sell
+            </Button>
+          )}
         </Col>
       </Row>
     );
@@ -81,13 +85,14 @@ class BasePage extends React.Component {
     super(props);
 
     // TODO: Should not have to do defensive check here
-    const player = this.getCurrentPlayer(props) || {type: { id: 0}};
+    const player = this.getCurrentPlayer(props) || { type: { id: 0 } };
 
     this.state = {
       day: 1,
       age: player.startingAge,
       chanceEncounter: null,
-      cash: STARTING_CASH,
+      // cash: STARTING_CASH,
+      cash: player.cash,
       debt: STARTING_DEBT,
       interestRate: 0.15,
       itemPouch: 25,
@@ -379,7 +384,7 @@ class BasePage extends React.Component {
       return (
         <React.Fragment>
           <Row>
-            <TabMenu onTabSelected={this.onTabSelected} selectedTabId={selectedTabId} />
+            <TabMenu />
           </Row>
           <Bank
             borrowLimit={Math.max(10, cash * 0.1)}
@@ -435,7 +440,7 @@ class BasePage extends React.Component {
       totalSharesOwned += sharesOwned ? sharesOwned : 0;
       return isPurchasable || sharesOwned || item.visibleInitially;
     });
-    
+
     const hiddenItems = items.length - visibleItems.length;
 
     const purchasableItems = (
@@ -469,9 +474,7 @@ class BasePage extends React.Component {
 
         {hiddenItems > 0 && (
           <Row>
-            <Notice warning>
-              Increase your net worth to unlock {hiddenItems} other items
-            </Notice>
+            <Notice warning>Increase your net worth to unlock {hiddenItems} other items</Notice>
           </Row>
         )}
       </React.Fragment>
@@ -500,23 +503,39 @@ class BasePage extends React.Component {
               <Col width={12}>
                 {totalPurchasableItems === 0 && (
                   <Notice danger>
-                    You don't have enough cash to buy anything. 
+                    You don't have enough cash to buy anything.
                     {totalSharesOwned > 0 && (
                       <React.Fragment>
-                        &nbsp;Sell shares or <a href="#" style={{ color: '#eee'}} onClick={() => {
-                          this.setState({
-                            selectedTabId: 'bank'
-                          });
-                        }}>visit the bank</a> to borrow money.
+                        &nbsp;Sell shares or{' '}
+                        <a
+                          href="#"
+                          style={{ color: '#eee' }}
+                          onClick={() => {
+                            this.setState({
+                              selectedTabId: 'bank',
+                            });
+                          }}
+                        >
+                          visit the bank
+                        </a>{' '}
+                        to borrow money.
                       </React.Fragment>
                     )}
                     {totalSharesOwned === 0 && (
                       <React.Fragment>
-                        &nbsp;<a href="#" style={{ color: '#eee'}} onClick={() => {
-                          this.setState({
-                            selectedTabId: 'bank'
-                          });
-                        }}>Visit the bank</a> to borrow money.
+                        &nbsp;
+                        <a
+                          href="#"
+                          style={{ color: '#eee' }}
+                          onClick={() => {
+                            this.setState({
+                              selectedTabId: 'bank',
+                            });
+                          }}
+                        >
+                          Visit the bank
+                        </a>{' '}
+                        to borrow money.
                       </React.Fragment>
                     )}
                   </Notice>

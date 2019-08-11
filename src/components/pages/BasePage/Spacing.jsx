@@ -2,7 +2,7 @@ import React from 'react';
 
 export default class Spacing extends React.PureComponent {
   unit = 1;
-  defaultProps = {
+  static defaultProps = {
     top: 0,
     bottom: 0,
     right: 0,

@@ -102,6 +102,8 @@ class PlayerSelect extends React.Component {
       id: createUniqueId(),
       typeId: currentPlayer.id,
       startingAge: startingAges[currentPlayer.id],
+      activeTasks: {},
+      cash: 30,
     });
     this.props.history.push('/');
   };

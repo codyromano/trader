@@ -9,7 +9,12 @@
       "component": "PlayerSelect",
       "path": "/player",
       "exact": true
+    },
+    "work": {
+      "component": "Work",
+      "path": "/work",
+      "exact": true
     }
   },
-  "order": ["garden", "player"]
+  "order": ["garden", "player", "work"]
 }
