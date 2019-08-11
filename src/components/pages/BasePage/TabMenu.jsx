@@ -7,7 +7,7 @@ import { withGameDatabase } from './withDatabase';
 export const tabs = [
   { id: 'spend', label: 'Trade' },
   { id: 'work', label: 'Work' },
-  { id: 'travel', label: 'Travel' },
+  // { id: 'travel', label: 'Travel' },
   { id: 'bank', label: 'Bank' },
 ];
 

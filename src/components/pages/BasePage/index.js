@@ -380,25 +380,6 @@ class BasePage extends React.Component {
       );
     }
 
-    if (selectedTabId === 'bank') {
-      return (
-        <React.Fragment>
-          <Row>
-            <TabMenu />
-          </Row>
-          <Bank
-            borrowLimit={Math.max(10, cash * 0.1)}
-            onBorrow={this.onBorrow}
-            onSubmit={this.onPayoffDebt}
-            onCancel={this.onCancelPayoff}
-            debt={debt}
-            interestRate={interestRate}
-            cash={cash}
-          />
-        </React.Fragment>
-      );
-    }
-
     if (priceSplitNews) {
       return (
         <Row>
@@ -508,13 +489,8 @@ class BasePage extends React.Component {
                       <React.Fragment>
                         &nbsp;Sell shares or{' '}
                         <a
-                          href="#"
+                          href="#/bank"
                           style={{ color: '#eee' }}
-                          onClick={() => {
-                            this.setState({
-                              selectedTabId: 'bank',
-                            });
-                          }}
                         >
                           visit the bank
                         </a>{' '}
@@ -525,13 +501,8 @@ class BasePage extends React.Component {
                       <React.Fragment>
                         &nbsp;
                         <a
-                          href="#"
+                          href="#/bank"
                           style={{ color: '#eee' }}
-                          onClick={() => {
-                            this.setState({
-                              selectedTabId: 'bank',
-                            });
-                          }}
                         >
                           Visit the bank
                         </a>{' '}
